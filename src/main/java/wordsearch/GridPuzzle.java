@@ -10,6 +10,7 @@ import java.util.NoSuchElementException;
  */
 public class GridPuzzle implements Puzzle {
    private final char[][] grid;
+   private final int width, height;
    private final EnumSet<MatchDirection> matchDirections;
 
    /**
@@ -19,17 +20,32 @@ public class GridPuzzle implements Puzzle {
       Horizontal(0, 1), Vertical(1, 0), Diagonal(1, 1), HorizontalBackwards(0, -1), VerticalBAckwards(-1,
             0), DiagonalBackwards(-1, -1);
 
-      final int xDelta, yDelta;
+      private final int xDelta, yDelta;
 
       MatchDirection(final int xDelta, final int yDelta) {
          this.xDelta = xDelta;
          this.yDelta = yDelta;
       }
+
+      public int getxDelta() {
+         return xDelta;
+      }
+
+      public int getyDelta() {
+         return yDelta;
+      }
+
    }
 
    private GridPuzzle(final char[][] grid, final EnumSet<MatchDirection> matchDirections) {
       this.grid = grid;
       this.matchDirections = matchDirections;
+      this.height = grid.length;
+      if (height == 0) {
+         width = 0;
+      } else {
+         width = grid[0].length;
+      }
    }
 
    @Override
@@ -46,10 +62,7 @@ public class GridPuzzle implements Puzzle {
 
       @Override
       public boolean hasNext() {
-         if (grid.length == 0) {
-            return false;
-         }
-         return (x < grid[0].length) || (y < grid.length) || directionIterator.hasNext();
+         return (y < height - 1) || (x < width - 1) || directionIterator.hasNext();
       }
 
       @Override
@@ -57,9 +70,31 @@ public class GridPuzzle implements Puzzle {
          if (!hasNext()) {
             throw new NoSuchElementException();
          }
-         // TODO: implement next()
-         return null;
+         final MatchDirection direction;
+         if (directionIterator.hasNext()) {
+            direction = directionIterator.next();
+         } else {
+            directionIterator = matchDirections.iterator();
+            direction = directionIterator.next();
+            if (x == width) {
+               y++;
+               x = 0;
+            } else {
+               x++;
+            }
+         }
+         int xCurr = 0, yCurr = 0;
+         final StringBuilder sBuilder = new StringBuilder();
+         while (withinBounds(xCurr, yCurr)) {
+            sBuilder.append(grid[yCurr][xCurr]);
+            xCurr += direction.getxDelta();
+            yCurr += direction.getyDelta();
+         }
+         return new GridPath(new Coords(x, y), new Coords(xCurr, yCurr), sBuilder.toString());
       }
 
+      private boolean withinBounds(final int x, final int y) {
+         return x >= 0 && x < width && y >= 0 && y < height;
+      }
    }
 }

@@ -20,6 +20,7 @@ public class TrieDictionary implements Dictionary {
    /**
     * {@inheritDoc}
     */
+   @Override
    public void insertWord(final String word) {
       TrieNode currNode = root;
       for (char character : word.toCharArray()) {
@@ -31,6 +32,7 @@ public class TrieDictionary implements Dictionary {
    /**
     * {@inheritDoc}
     */
+   @Override
    public boolean containsWord(final String word) {
       TrieNode currNode = root;
       for (char character : word.toCharArray()) {
@@ -46,6 +48,7 @@ public class TrieDictionary implements Dictionary {
     * {@inheritDoc}
     * 
     */
+   @Override
    public List<String> findAllWords(final String sequence, final int minLength) {
       final List<String> resultSet = new ArrayList<>();
       if (minLength > sequence.length()) {
@@ -65,6 +68,24 @@ public class TrieDictionary implements Dictionary {
          }
       }
       return resultSet;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public void removeWord(final String word) {
+      if (!containsWord(word)) {
+         return;
+      }
+      TrieNode currNode = root;
+      for (char character : word.toCharArray()) {
+         if (currNode.getChild(character).getNumChildren() < 2) {
+            currNode.removeChild(character);
+            break;
+         }
+         currNode = currNode.getChild(character);
+      }
    }
 
    /*
@@ -94,8 +115,16 @@ public class TrieDictionary implements Dictionary {
          return childNode;
       }
 
-      public TrieNode getChild(char child) {
+      public TrieNode getChild(final char child) {
          return children.get(child);
+      }
+
+      public int getNumChildren() {
+         return children.size();
+      }
+
+      public void removeChild(final char child) {
+         children.remove(child);
       }
 
       public boolean endsWord() {

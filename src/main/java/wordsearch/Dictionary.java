@@ -48,8 +48,18 @@ public interface Dictionary {
     *           The word to insert into the Dictionary
     * 
     * @throws NullPointerException
-    *            if passed a null string
+    *            if passed a null word
     */
    public void insertWord(final String word);
+
+   /**
+    * Removes a word from the Dictionary if it exists
+    * 
+    * @param word
+    *           The word to remove from the Dictionary
+    * @throws NullPointerException
+    *            if passed a null word
+    */
+   public void removeWord(final String word);
 
 }
