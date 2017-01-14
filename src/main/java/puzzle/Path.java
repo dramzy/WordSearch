@@ -1,9 +1,9 @@
-package wordsearch;
+package puzzle;
 
 /**
  * Represents a path in a word search puzzle
  */
-public interface Path extends Iterable<Coords> {
+public interface Path<T> extends Iterable<T> {
    /**
     * Returns a Path that is a subPath of this Path starting at beginIndex and
     * ending at endIndex
@@ -16,7 +16,7 @@ public interface Path extends Iterable<Coords> {
     * @throws IndexOutOfBoundsException
     *            if beginIndex or endIndex are out of bounds
     */
-   public Path getSubPath(final int beginIndex, final int endIndex);
+   public Path<T> getSubPath(final int beginIndex, final int endIndex);
 
    /**
     * Get the String along this path

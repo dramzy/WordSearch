@@ -1,6 +1,10 @@
-package wordsearch;
+package solver;
 
 import java.util.List;
+
+import dictionary.Dictionary;
+import puzzle.Path;
+import puzzle.Puzzle;
 
 /**
  * Represents a Puzzle solver
@@ -16,5 +20,5 @@ public interface Solver {
     *           The Puzzle to solve
     * @return A list of Paths that contain Dictionary words
     */
-   public List<Path> solve(final Dictionary dictionary, final Puzzle puzzle);
+   public <T> List<Path<T>> solve(final Dictionary dictionary, final Puzzle<T> puzzle);
 }

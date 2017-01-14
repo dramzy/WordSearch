@@ -1,7 +1,11 @@
-package wordsearch;
+package solver;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import dictionary.Dictionary;
+import puzzle.Path;
+import puzzle.Puzzle;
 
 /**
  * A simple implementation of Solver that filters Puzzle Paths that contain
@@ -13,10 +17,11 @@ public class SimpleSolver implements Solver {
     * {@inheritDoc}
     */
    @Override
-   public List<Path> solve(final Dictionary dictionary, final Puzzle puzzle) {
-      List<Path> resultSet = new ArrayList<>();
-      for (Path path : puzzle) {
-         List<String> words = dictionary.findAllWords(path.getWord(), 3);
+   public <T> List<Path<T>> solve(final Dictionary dictionary, final Puzzle<T> puzzle) {
+      final int minMatchLength = puzzle.getMinWordLength();
+      List<Path<T>> resultSet = new ArrayList<>();
+      for (Path<T> path : puzzle) {
+         List<String> words = dictionary.findAllWords(path.getWord(), minMatchLength);
          for (String word : words) {
             resultSet.add(path.getSubPath(0, word.length()));
          }

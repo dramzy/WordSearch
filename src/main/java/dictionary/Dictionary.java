@@ -1,4 +1,4 @@
-package wordsearch;
+package dictionary;
 
 import java.util.List;
 

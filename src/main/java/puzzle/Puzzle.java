@@ -1,8 +1,11 @@
-package wordsearch;
+package puzzle;
 
-/**
- * Represents a word search puzzle of any shape
- */
-public interface Puzzle extends Iterable<Path> {
+public interface Puzzle<T> extends Iterable<Path<T>> {
 
+   /**
+    * Retrieves the minimum length for a word match in this Puzzle
+    * 
+    * @return The minimum length for a word match
+    */
+   public int getMinWordLength();
 }
