@@ -26,7 +26,7 @@ public interface Path<T> extends Iterable<T> {
    public String getWord();
 
    /**
-    * Retreives the length of this Path
+    * Retrieves the length of this Path
     * 
     * @return The length of this Path
     */

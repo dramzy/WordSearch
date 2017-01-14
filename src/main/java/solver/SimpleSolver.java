@@ -3,6 +3,9 @@ package solver;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import dictionary.Dictionary;
 import puzzle.Path;
 import puzzle.Puzzle;
@@ -12,6 +15,8 @@ import puzzle.Puzzle;
  * Dictionary words
  */
 public class SimpleSolver implements Solver {
+
+   private static final Logger LOGGER = LoggerFactory.getLogger(SimpleSolver.class);
 
    /**
     * {@inheritDoc}
