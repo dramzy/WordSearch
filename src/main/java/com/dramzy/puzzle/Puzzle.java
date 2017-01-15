@@ -1,4 +1,4 @@
-package puzzle;
+package com.dramzy.puzzle;
 
 public interface Puzzle<T> extends Iterable<Path<T>> {
 

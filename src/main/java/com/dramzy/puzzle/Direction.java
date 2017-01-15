@@ -1,4 +1,4 @@
-package puzzle;
+package com.dramzy.puzzle;
 
 import java.util.EnumSet;
 

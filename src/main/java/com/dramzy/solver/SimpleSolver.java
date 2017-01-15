@@ -1,4 +1,4 @@
-package solver;
+package com.dramzy.solver;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,9 +6,9 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import dictionary.Dictionary;
-import puzzle.Path;
-import puzzle.Puzzle;
+import com.dramzy.dictionary.Dictionary;
+import com.dramzy.puzzle.Path;
+import com.dramzy.puzzle.Puzzle;
 
 /**
  * A simple implementation of Solver that filters Puzzle Paths that contain

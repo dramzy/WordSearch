@@ -1,4 +1,4 @@
-package puzzle;
+package com.dramzy.puzzle;
 
 /**
  * Represents coordinates in a puzzle

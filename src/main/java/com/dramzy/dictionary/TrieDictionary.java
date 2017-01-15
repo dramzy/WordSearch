@@ -1,4 +1,4 @@
-package dictionary;
+package com.dramzy.dictionary;
 
 import java.util.ArrayList;
 import java.util.HashMap;

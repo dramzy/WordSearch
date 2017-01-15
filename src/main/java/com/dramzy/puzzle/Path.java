@@ -1,4 +1,4 @@
-package puzzle;
+package com.dramzy.puzzle;
 
 /**
  * Represents a path in a word search puzzle

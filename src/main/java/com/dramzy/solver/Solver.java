@@ -1,10 +1,10 @@
-package solver;
+package com.dramzy.solver;
 
 import java.util.List;
 
-import dictionary.Dictionary;
-import puzzle.Path;
-import puzzle.Puzzle;
+import com.dramzy.dictionary.Dictionary;
+import com.dramzy.puzzle.Path;
+import com.dramzy.puzzle.Puzzle;
 
 /**
  * Represents a Puzzle solver
