@@ -18,7 +18,8 @@ public class DictionaryParser {
 		Scanner inputScanner = new Scanner(dictStream);
 		final ArrayList<String> dict = new ArrayList<>();
 		while (inputScanner.hasNextLine()) {
-			dict.add(inputScanner.nextLine());
+			String next = inputScanner.nextLine().toLowerCase();
+			dict.add(next);
 		}
 		return new TrieDictionary(dict);
 	}

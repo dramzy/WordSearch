@@ -1,88 +1,109 @@
 package com.dramzy.wordsearch;
 
 import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
+
+import com.dramzy.dictionary.Dictionary;
+import com.dramzy.puzzle.Coord2d;
+import com.dramzy.puzzle.GridPuzzle;
+import com.dramzy.puzzle.Path;
+import com.dramzy.solver.SimpleSolver;
+import com.dramzy.solver.Solver;
 
 public class WordSearch {
-	private static String appName = "WordSearch";
-	private static String default_dictionary_resource = "/com/dramzy/dict";
+	private static String appName = "WordSearch", default_dictionary_resource = "/com/dramzy/dict";
 
 	public static void main(final String[] argv) {
+		InputStream puzzleStream = System.in,
+				dictionaryStream = WordSearch.class.getResourceAsStream(default_dictionary_resource);
 		ArgParser parser = new ArgParser();
-		parser.parse(argv);
-		InputStream dictStream = null, puzzleStream = null;
-		if (parser.getPuzzleFilePath() == null) {
-			puzzleStream = System.in;
-		} else {
-			try (final FileInputStream puzzleFileStream = new FileInputStream(parser.getDictFilePath())) {
-				puzzleStream = puzzleFileStream;
-			} catch (IOException ioe) {
-				System.err.println("Error reading puzzle file: " + parser.getDictFilePath());
-				System.exit(1);
-			}
+		try {
+			parser.parse(argv);
+			Optional<String> puzzleFile = parser.getPuzzleFilePath(), dictFile = parser.getDictFilePath();
+			puzzleStream = puzzleFile.isPresent() ? new FileInputStream(puzzleFile.get()) : puzzleStream;
+			dictionaryStream = dictFile.isPresent() ? new FileInputStream(dictFile.get()) : dictionaryStream;
+			GridPuzzle puzzle = (new GridPuzzleParser(puzzleStream)).parse();
+			puzzle.setMinWordLength(parser.getMatchLength());
+			Dictionary dictionary = (new DictionaryParser(dictionaryStream)).parse();
+			Solver solver = new SimpleSolver();
+			List<Path<Coord2d>> matches = solver.solve(dictionary, puzzle);
+			matches.stream().forEach(match -> System.out.println(match));
+		} catch (ArgParser.UsageException ue) {
+			fail(1, "Usage error: " + ue.getMessage());
+		} catch (FileNotFoundException fe) {
+			fail(2, "Error reading file: " + fe.getMessage());
+		} catch (ParserException pe) {
+			fail(3, "Parsing error: " + pe.getMessage());
+		} catch (Exception e) {
+			fail(4, "Error: " + e.getMessage());
 		}
+	}
 
-		if (parser.getDictFilePath() == null) {
-			dictStream = WordSearch.class.getResourceAsStream(default_dictionary_resource);
-		} else {
-			try (final FileInputStream dictFileStream = new FileInputStream(parser.getDictFilePath())) {
-				dictStream = dictFileStream;
-			} catch (IOException ioe) {
-				System.err.println("Error reading dictionary file: " + parser.getDictFilePath());
-				System.exit(1);
-			}
-		}
-
-		final PuzzleParser puzzleParser = new PuzzleParser(puzzleStream);
-		final DictionaryParser dictParser = new DictionaryParser(dictStream);
-
-		// TODO: parse dictionary and puzzle, and display matches
+	private static void fail(final int errorCode, final String... messages) {
+		Arrays.asList(messages).stream().forEach(message -> System.err.println(message));
+		System.exit(errorCode);
 	}
 
 	private static class ArgParser {
-		private String puzzleFilePath, dictFilePath;
+		// TODO: add support for passing in match directions
+		private Optional<String> puzzleFilePath = Optional.empty(), dictFilePath = Optional.empty();
+		private int matchLength = 3;
 		private final String usage = "Usage: " + appName + " [-d|--dictionary <file>] [-p|--puzzle <file>]";
 
-		public String getPuzzleFilePath() {
+		public Optional<String> getPuzzleFilePath() {
 			return puzzleFilePath;
 		}
 
-		public String getDictFilePath() {
+		public Optional<String> getDictFilePath() {
 			return dictFilePath;
 		}
 
-		void parse(final String[] argv) {
+		public int getMatchLength() {
+			return matchLength;
+		}
+
+		void parse(final String[] argv) throws UsageException {
 			Iterator<String> it = Arrays.asList(argv).iterator();
 			while (it.hasNext()) {
 				switch (it.next()) {
 				case "-d":
 				case "--dictionary":
 					if (!it.hasNext()) {
-						fail("Dictionary file path expected", argv);
+						throw new UsageException(argv, "Dictionary file path expected");
 					}
-					dictFilePath = it.next();
+					dictFilePath = Optional.of(it.next());
 					break;
 				case "-p":
 				case "--puzzle":
 					if (!it.hasNext()) {
-						fail("Puzzle file path expected", argv);
+						throw new UsageException(argv, "Puzzle file path expected");
 					}
-					puzzleFilePath = it.next();
+					puzzleFilePath = Optional.of(it.next());
+					break;
+				case "-l":
+				case "--match-length":
+					try {
+						matchLength = Integer.parseUnsignedInt(it.next());
+					} catch (NumberFormatException | NoSuchElementException e) {
+						throw new UsageException(argv, "Numeric minimum match length expected");
+					}
 					break;
 				default:
-					fail("Unexpected argument", argv);
+					throw new UsageException(argv, "Unexpected argument");
 				}
 			}
 		}
 
-		void fail(final String message, final String[] argv) {
-			System.err.println("ERROR: " + message);
-			System.err.println("arguments: " + argv);
-			System.err.println(usage);
-			System.exit(1);
+		public static class UsageException extends Exception {
+			public UsageException(final String[] argv, final String... msgs) {
+				super(String.join("\n", msgs) + "\narguments: " + String.join(" ", argv));
+			}
 		}
 
 	}
