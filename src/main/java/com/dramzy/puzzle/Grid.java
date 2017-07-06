@@ -121,6 +121,7 @@ public class Grid implements Iterable<Coord2d> {
 			sBuilder.append(getElementAt(currCoords));
 			currCoords.move(direction, 1);
 		}
+		sBuilder.append(getElementAt(currCoords));
 		return new GridPath(startCoords, currCoords, sBuilder.toString(), direction);
 	}
 
@@ -134,11 +135,11 @@ public class Grid implements Iterable<Coord2d> {
 	}
 
 	private final class GridIterator implements Iterator<Coord2d> {
-		private final Coord2d coords = new Coord2d(0, 0);
+		private Coord2d coords = null;
 
 		@Override
 		public boolean hasNext() {
-			return !(coords.getX() == width - 1 && coords.getY() == height - 1);
+			return coords == null || !(coords.getX() == width - 1 && coords.getY() == height - 1);
 		}
 
 		@Override
@@ -146,7 +147,9 @@ public class Grid implements Iterable<Coord2d> {
 			if (!hasNext()) {
 				throw new NoSuchElementException("No more elements in Grid");
 			}
-			if (coords.getX() == getWidth() - 1) {
+			if (coords == null) {
+				coords = new Coord2d(0, 0);
+			} else if (coords.getX() == getWidth() - 1) {
 				coords.moveY(1).setX(0);
 			} else {
 				coords.moveX(1);
